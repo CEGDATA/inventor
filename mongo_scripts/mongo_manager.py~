@@ -17,8 +17,9 @@ def first_to_mongo(items, db_ident, coll_ident):
 	coll = db[coll_ident]
 	#NOTE this assumes that items contains multiple documents.  For the most part, I assume this is how things will go.  If this changes, we'll have to
 	#put an if statement in or something.
-	coll.insert_many(items)
-
+	inserted_ids = coll.insert_many(items).inserted_ids
+	return inserted_ids 
+	
 
 def from_mongo(db_ident, coll_ident, query={}):
 	#reads from mongodb
@@ -29,7 +30,7 @@ def from_mongo(db_ident, coll_ident, query={}):
 	return list(cursor)
 
 
-def to_mongo(db_ident, coll_ident, df):
+def update_mongo(db_ident, coll_ident, df):
 	db = client[db_ident]
 	coll = db[coll_ident]
 

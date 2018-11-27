@@ -12,13 +12,14 @@ client = pymongo.MongoClient(conn)
 
 #need to pass in the database and collection that you want to insert values into
 def first_to_mongo(items, db_ident, coll_ident):
-	print(db_ident)
+	#print(db_ident)
 	db = client[db_ident]
 	coll = db[coll_ident]
 	#NOTE this assumes that items contains multiple documents.  For the most part, I assume this is how things will go.  If this changes, we'll have to
 	#put an if statement in or something.
-	coll.insert_many(items)
-
+	inserted_ids = coll.insert_many(items).inserted_ids
+	return inserted_ids 
+	
 
 def from_mongo(db_ident, coll_ident, query={}):
 	#reads from mongodb
