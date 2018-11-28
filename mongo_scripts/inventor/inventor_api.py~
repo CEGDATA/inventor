@@ -79,7 +79,8 @@ def get_data(requested_props, parts, not_in_api):
 	return parts_props_list
 
 
-def write_props(prop, prop_set):
+def write_props(new_prop, prop, prop_set):
+	prop_set.Item(prop).Value = new_prop
 	return None
 
 def change_props(df=None, not_in_api=None, parts=None, props_to_change=None, path_id_dict=None, is_first=False):
@@ -111,8 +112,11 @@ def change_props(df=None, not_in_api=None, parts=None, props_to_change=None, pat
 		app.Quit()
 		del app
 	else:
+		#convert the _id column in the dataframe to strings
 		for path in path_id_dict.keys():
-			new_object_id = path_id_dict[path]	
+			#new_object_id is of type bson.objectid.ObjectId, which is what mongo needs to use it.  We cast it as a string here for the equivalency check
+			#later on.
+			new_object_id = str(path_id_dict[path])	
 			#now, we need to open each .ipt in this directory and find the one that has the same object_id
 			for filename in os.listdir(path):
 				if filename.endswith('.ipt'):
@@ -127,9 +131,8 @@ def change_props(df=None, not_in_api=None, parts=None, props_to_change=None, pat
 					#if it does, see if it matches the one in the dictionary
 					try:	
 						object_id = extract('Mongo ObjectId', user_def_props)
-						print(object_id)
-						print(new_object_id)
 						if object_id == new_object_id:
+							print('equal!')
 							#if the object id is the same as the one in the dictionary we pass in, change the properties from the dataframe
 							design_props = doc.PropertySets.Item('Design Tracking Properties')
 							inv_properties = get_inv_properties(df.columns, not_in_api)				
@@ -137,9 +140,24 @@ def change_props(df=None, not_in_api=None, parts=None, props_to_change=None, pat
 							for prop in inv_properties:
 								#get the property we want to write.  It is the property located in the 'prop' column where the value in the '_id' column equals 
 								#the object_id
-								new_prop = df[prop]['_id' == object_id]
-								print(new_prop)	
-								#write_props(new_prop, design_props)
+								print(f'property is: {prop}')
+								#exit loop and go to next part if we reach '_id', since we don't want to change that one, even if it was mistakenly changed in the 
+								#spreadsheet
+								if prop == '_id':
+									break
+								#new_prop = df[prop]['_id' == object_id]	
+								#NOTE, same thing here with type differences, we need to cast the df['_id'] values as strings so the comparison works	
+								#iloc[0] call at the end gives us the value without the index
+								new_prop = df.loc[df['_id'].astype(str) == object_id, prop].iloc[0]
+								print(f'new property is: {new_prop}')	
+								#NOTE, new_prop is the value of the property, prop is the name of the property and design_props is the property set
+								write_props(new_prop, prop, design_props)
+
+								#NOW, if the filename is different than the value of 'Filename w/o Extension' for this object_id, we change the actual filename	
+								new_filename = df.loc[df['_id'].astype(str) == object_id, 'Filename w/o Extension'].iloc[0] + '.ipt'
+								print(new_filename)
+								if filename != new_filename:
+									os.rename(filename, new_filename) 
 					except Exception as exc:
 						print(f'error reading Mongo object_id for {filename}')
 						print(exc)

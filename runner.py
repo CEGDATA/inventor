@@ -12,7 +12,7 @@ from pprint import pprint
 
 import time
 #vendors we will be inserting into the database
-VENDOR_LIST = ['OHIO BRASS']
+VENDOR_LIST = ['ANDERSON', 'LAPP']
 #directories that we are not interested in traversing
 FORBIDDEN = ['OldVersions', 'Import']
 #the iproperties we want from the database.  NOTE This could be extracted from the excel sheet using the dataframe columns 
@@ -62,11 +62,12 @@ def populate_db():
 #import win32api
 #print(win32api.FormatMessage(-2147467259))
 #print(win32api.FormatMessage(-2147024809))
-
+#print(win32api.FormatMessage(-2147352567))
+#exit()
 #win32api errors:
 #-2147024809: "The parameter is incorrect"
 #-2147023170: "The remote procedure call failed"
-
+#-2147352567: "Exception Occured"
 def read_from_db():
 	"""
 	This function will allow a user to input a "query" through inputting values into an excel sheet that will return the requested info from mongodb.
@@ -96,7 +97,7 @@ def update_system():
 	inv.change_props(df=doc_df, not_in_api=NOT_IN_API, path_id_dict=path_id_dict)
 	return None
 
-update_system()
+#update_system()
 
 
 
@@ -108,5 +109,6 @@ doc_df = ex.mongo_to_dataframe(documents)
 inv.change_props(doc_df, parts)
 """
 
-
-
+#populate_db()
+#read_from_db()
+update_system()
