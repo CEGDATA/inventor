@@ -8,6 +8,8 @@ import read_write_excel as ex
 import inventor_api as inv
 import get_filenames as f
 
+import xlwings as xw
+
 from pprint import pprint
 
 import time
@@ -26,7 +28,7 @@ DB_NAME = 'Inventor_DB_TESTING'
 #the collection we want to interact with
 COLL_NAME = 'iProperties_Collection_TESTING'
 #path for excel document
-EXCEL_PATH = r"Z:\CEG\DRAFTING\3DManufacturerParts\3DModelDatabase_Jake_work_11152018.xlsx"
+EXCEL_PATH = r"Z:\CEG\DRAFTING\3DManufacturerParts\3DModelDatabase_Jake_work_11302018.xlsx"
 #puts the vendor and part number columns first when writing, for readability
 FIRST_COLUMNS = ['Vendor', 'Part Number']
 
@@ -75,10 +77,15 @@ def read_from_db():
 	"""
 	#NOTE, currently, this just pulls the entire database, but this will become difficult as more and more data are added to the database, so
 	#querying will be required.EXCEL_PATH = r"Z:\CEG\DRAFTING\3DManufacturerParts\3DModelDatabase_Jake_work_11152018.xlsx"
+	wb = xw.Book.caller()
+	sht = wb.sheets[0]
 	documents = mm.from_mongo(DB_NAME, COLL_NAME)
 	doc_df = ex.mongo_to_dataframe(documents)
-	ex.send_to_excel(doc_df, FIRST_COLUMNS, EXCEL_PATH)	
+	sht.range('A1').value = doc_df
+	#ex.send_to_excel(doc_df, FIRST_COLUMNS, EXCEL_PATH)	
+		
 	return None
+
 
 
 #read_from_db()
@@ -110,5 +117,5 @@ inv.change_props(doc_df, parts)
 """
 
 #populate_db()
-read_from_db()
-
+#read_from_db()
+update_system()

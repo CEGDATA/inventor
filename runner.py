@@ -8,6 +8,8 @@ import read_write_excel as ex
 import inventor_api as inv
 import get_filenames as f
 
+import xlwings as xw
+
 from pprint import pprint
 
 import time
@@ -26,7 +28,7 @@ DB_NAME = 'Inventor_DB_TESTING'
 #the collection we want to interact with
 COLL_NAME = 'iProperties_Collection_TESTING'
 #path for excel document
-EXCEL_PATH = r"Z:\CEG\DRAFTING\3DManufacturerParts\3DModelDatabase_Jake_work_11152018.xlsx"
+EXCEL_PATH = r"Z:\CEG\DRAFTING\3DManufacturerParts\3DModelDatabase_Jake_work_11302018.xlsx"
 #puts the vendor and part number columns first when writing, for readability
 FIRST_COLUMNS = ['Vendor', 'Part Number']
 
@@ -71,14 +73,19 @@ def populate_db():
 def read_from_db():
 	"""
 	This function will allow a user to input a "query" through inputting values into an excel sheet that will return the requested info from mongodb.
-	It will output to either excel or php (or others if we use them in the future)
+	It will output to either excel or php (or others if we use them in the future)C:\ProgramData\Anaconda3\python.exe
 	"""
 	#NOTE, currently, this just pulls the entire database, but this will become difficult as more and more data are added to the database, so
 	#querying will be required.EXCEL_PATH = r"Z:\CEG\DRAFTING\3DManufacturerParts\3DModelDatabase_Jake_work_11152018.xlsx"
+	wb = xw.Book.caller()
+	sht = wb.sheets[0]
 	documents = mm.from_mongo(DB_NAME, COLL_NAME)
 	doc_df = ex.mongo_to_dataframe(documents)
-	ex.send_to_excel(doc_df, FIRST_COLUMNS, EXCEL_PATH)	
+	sht.range('A1').value = doc_df
+	#ex.send_to_excel(doc_df, FIRST_COLUMNS, EXCEL_PATH)	
+		
 	return None
+
 
 
 #read_from_db()
