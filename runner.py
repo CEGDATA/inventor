@@ -28,9 +28,11 @@ DB_NAME = 'Inventor_DB_TESTING'
 #the collection we want to interact with
 COLL_NAME = 'iProperties_Collection_TESTING'
 #path for excel document
-EXCEL_PATH = r"Z:\CEG\DRAFTING\3DManufacturerParts\3DModelDatabase_Jake_work_11302018.xlsx"
+EXCEL_PATH = r"Z:\CEG\DRAFTING\3DManufacturerParts\3DModelDatabase_Jake_work_11302018.xlsm"
 #puts the vendor and part number columns first when writing, for readability
 FIRST_COLUMNS = ['Vendor', 'Part Number']
+
+
 
 def populate_db():
 	"""
@@ -81,9 +83,10 @@ def read_from_db():
 	sht = wb.sheets[0]
 	documents = mm.from_mongo(DB_NAME, COLL_NAME)
 	doc_df = ex.mongo_to_dataframe(documents)
+	doc_df = doc_df.astype({'_id': str})
+	doc_df = doc_df[FIRST_COLUMNS + [c for c in list(doc_df.columns) if c not in FIRST_COLUMNS]]
 	sht.range('A1').value = doc_df
-	#ex.send_to_excel(doc_df, FIRST_COLUMNS, EXCEL_PATH)	
-		
+	#ex.send_to_excel(doc_df, FIRST_COLUMNS, EXCEL_PATH)			
 	return None
 
 
@@ -98,13 +101,13 @@ def update_system():
 	mm.update_mongo(DB_NAME, COLL_NAME, input_df)
 	documents = mm.from_mongo(DB_NAME, COLL_NAME)
 	doc_df = ex.mongo_to_dataframe(documents)
-	print(doc_df)
+	#print(doc_df)
 	path_id_dict = dict(zip(doc_df['Found Location'].values, doc_df['_id']))
-	print(path_id_dict)
+	#print(path_id_dict)
 	inv.change_props(df=doc_df, not_in_api=NOT_IN_API, path_id_dict=path_id_dict)
 	return None
 
-#update_system()
+
 
 
 
@@ -118,4 +121,4 @@ inv.change_props(doc_df, parts)
 
 #populate_db()
 #read_from_db()
-update_system()
+#update_system()
