@@ -17,9 +17,9 @@ def send_to_excel(df, first_columns, excel_path):
 	print(df)	
 	df.to_excel(excel_path, index=False)
 
-def get_from_excel(excel_path):
-	#get the dataframe	
-	df = pd.read_excel(excel_path)
+def get_from_excel(excel_path, sheet):
+	#get the dataframe		
+	df = pd.read_excel(excel_path, sheet_name=sheet)
 	#df_json = df.to_json(orient='records')
 	#mongo might not like nans, so we are going to replace them with empty strings
 	df.fillna('', inplace=True)

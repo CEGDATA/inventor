@@ -80,7 +80,10 @@ def read_from_db():
 	#querying will be required.EXCEL_PATH = r"Z:\CEG\DRAFTING\3DManufacturerParts\3DModelDatabase_Jake_work_11152018.xlsx"
 	wb = xw.Book.caller()
 	sht = wb.sheets[0]
-	documents = mm.from_mongo(DB_NAME, COLL_NAME)
+	#input dataframe is created by user on the 'Input' sheet.  This is used to structure the query to mongo	
+	
+	input_df = ex.get_from_excel(EXCEL_PATH, 'Input')
+	documents = mm.from_mongo(DB_NAME, COLL_NAME, input_df)
 	doc_df = ex.mongo_to_dataframe(documents)
 	doc_df = doc_df.astype({'_id': str})
 	doc_df = doc_df[FIRST_COLUMNS + [c for c in list(doc_df.columns) if c not in FIRST_COLUMNS]]
@@ -96,7 +99,7 @@ def update_system():
 	"""
 	This function will update the database and iProperties according to the user input from either excel or webserver
 	"""
-	input_df = ex.get_from_excel(EXCEL_PATH)
+	input_df = ex.get_from_excel(EXCEL_PATH, 'Sheet1')
 	mm.update_mongo(DB_NAME, COLL_NAME, input_df)
 	documents = mm.from_mongo(DB_NAME, COLL_NAME)
 	doc_df = ex.mongo_to_dataframe(documents)
@@ -119,5 +122,5 @@ inv.change_props(doc_df, parts)
 """
 
 #populate_db()
-#read_from_db()
+read_from_db()
 #update_system()
