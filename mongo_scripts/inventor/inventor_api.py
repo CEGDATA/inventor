@@ -66,7 +66,7 @@ def get_data(requested_props, parts, not_in_api):
 		filename_wo_extension = part.split('\\')[-1].split('.')[0]
 		#get the found location and the filename and add them to their locations in the dictionary
 		#os.path.dirname() converts the string to the directory path - does not include the filename
-		found_location = os.path.dirname(part)
+		found_location = os.path.dirname(part)RunPython ("import os; os.chdir(r'C:\Users\jmarsnik\Desktop\data_work\inventor_scripts\best_version\inventor'); import runner; runner.update_system()")
 		part_prop_dict['Filename w/o Extension'] = filename_wo_extension
 		part_prop_dict['Found Location'] = found_location
 		#print(part_prop_dict)

@@ -155,9 +155,12 @@ def change_props(df=None, not_in_api=None, parts=None, props_to_change=None, pat
 
 								#NOW, if the filename is different than the value of 'Filename w/o Extension' for this object_id, we change the actual filename	
 								new_filename = df.loc[df['_id'].astype(str) == object_id, 'Filename w/o Extension'].iloc[0] + '.ipt'
+								new_full_path = os.path.join(path, new_filename)
 								print(new_filename)
 								if filename != new_filename:
-									os.rename(filename, new_filename) 
+									os.rename(full_path, new_full_path)
+								elif filename == new_filename:
+									print('same')
 					except Exception as exc:
 						print(f'error reading Mongo object_id for {filename}')
 						print(exc)
