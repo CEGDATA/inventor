@@ -66,7 +66,7 @@ def get_data(requested_props, parts, not_in_api):
 		filename_wo_extension = part.split('\\')[-1].split('.')[0]
 		#get the found location and the filename and add them to their locations in the dictionary
 		#os.path.dirname() converts the string to the directory path - does not include the filename
-		found_location = os.path.dirname(part)RunPython ("import os; os.chdir(r'C:\Users\jmarsnik\Desktop\data_work\inventor_scripts\best_version\inventor'); import runner; runner.update_system()")
+		found_location = os.path.dirname(part)
 		part_prop_dict['Filename w/o Extension'] = filename_wo_extension
 		part_prop_dict['Found Location'] = found_location
 		#print(part_prop_dict)
@@ -104,8 +104,14 @@ def change_props(df=None, not_in_api=None, parts=None, props_to_change=None, pat
 			object_id = str(path_id_dict[path])	
 			#NOTE, if the inventor file already has this as a parameters, win32api will throw error -2147024809: 'The Parameter is Incorrect'.
 			#If this error gets thrown, nothing should be changed, the object id we're attempting to write should be logged as well as the error so we can
-			#investigate.
-			user_def_props.Add(object_id, 'Mongo ObjectId')
+			#investigate.	
+
+			#check if the mongo id exists as a custom property already.  if it does, update with the new one, if it doesn't, create it
+			existing = user_def_props.Item('Mongo ObjectId')	
+			if existing is not None:
+				existing.Value = object_id
+			else:
+				user_def_props.Add(object_id, 'Mongo ObjectId')
 			#need to save the document after we write to it	
 			doc.Save()
 			app.Documents.CloseAll()
@@ -165,7 +171,6 @@ def change_props(df=None, not_in_api=None, parts=None, props_to_change=None, pat
 						print(f'error reading Mongo object_id for {filename}')
 						print(exc)
 						continue
-
 
 
 def check_objectid(parts):

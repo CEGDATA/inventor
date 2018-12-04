@@ -33,7 +33,6 @@ EXCEL_PATH = r"Z:\CEG\DRAFTING\3DManufacturerParts\3DModelDatabase_Jake_work_113
 FIRST_COLUMNS = ['Vendor', 'Part Number']
 
 
-
 def populate_db():
 	"""
 	This function will, given a list of vendors, go into the directories and pull out the iProperties from those .ipt files

@@ -104,8 +104,12 @@ def change_props(df=None, not_in_api=None, parts=None, props_to_change=None, pat
 			object_id = str(path_id_dict[path])	
 			#NOTE, if the inventor file already has this as a parameters, win32api will throw error -2147024809: 'The Parameter is Incorrect'.
 			#If this error gets thrown, nothing should be changed, the object id we're attempting to write should be logged as well as the error so we can
-			#investigate.
-			user_def_props.Add(object_id, 'Mongo ObjectId')
+			#investigate.	
+			existing = user_def_props.Item('Mongo ObjectId')	
+			if existing is not None:
+				existing.Value = object_id
+			else:
+				user_def_props.Add(object_id, 'Mongo ObjectId')
 			#need to save the document after we write to it	
 			doc.Save()
 			app.Documents.CloseAll()
@@ -165,7 +169,6 @@ def change_props(df=None, not_in_api=None, parts=None, props_to_change=None, pat
 						print(f'error reading Mongo object_id for {filename}')
 						print(exc)
 						continue
-
 
 
 def check_objectid(parts):
