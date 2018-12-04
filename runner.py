@@ -122,5 +122,5 @@ inv.change_props(doc_df, parts)
 """
 
 #populate_db()
-read_from_db()
+#read_from_db()
 #update_system()
