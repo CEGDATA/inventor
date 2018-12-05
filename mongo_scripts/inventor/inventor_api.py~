@@ -10,10 +10,11 @@ import os
 
 def open_inventor():
 	#opens inventor
-	inventor = win32com.client.Dispatch('Inventor.Application')
+	#inventor = win32com.client.Dispatch('Inventor.Application')
 	#NOTE, this is the call (I think) for using Apprentice:
-	#inventor = win32com.client.Dispatch('Inventor.ApprenticeServerComponent')
-	#exit()
+	inventor = win32com.client.Dispatch('Inventor.ApprenticeServerComponent')
+	exit()
+	del inventor	
 	#decide if you want the app to be visible or not - NOTE uncomment to set visible
 	#inventor.Visible = True
 
@@ -105,6 +106,8 @@ def change_props(df=None, not_in_api=None, parts=None, props_to_change=None, pat
 			#NOTE, if the inventor file already has this as a parameters, win32api will throw error -2147024809: 'The Parameter is Incorrect'.
 			#If this error gets thrown, nothing should be changed, the object id we're attempting to write should be logged as well as the error so we can
 			#investigate.	
+
+			#check if the mongo id exists as a custom property already.  if it does, update with the new one, if it doesn't, create it
 			existing = user_def_props.Item('Mongo ObjectId')	
 			if existing is not None:
 				existing.Value = object_id

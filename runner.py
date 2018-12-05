@@ -71,6 +71,8 @@ def populate_db():
 #-2147024809: "The parameter is incorrect"
 #-2147023170: "The remote procedure call failed"
 #-2147352567: "Exception Occured"
+#-2146959355: "Server execution failed"
+#-2147023170: "The remote procedure call failed"
 def read_from_db():
 	"""
 	This function will allow a user to input a "query" through inputting values into an excel sheet that will return the requested info from mongodb.
@@ -80,10 +82,16 @@ def read_from_db():
 	#querying will be required.EXCEL_PATH = r"Z:\CEG\DRAFTING\3DManufacturerParts\3DModelDatabase_Jake_work_11152018.xlsx"
 	wb = xw.Book.caller()
 	sht = wb.sheets[0]
-	documents = mm.from_mongo(DB_NAME, COLL_NAME)
+	#input dataframe is created by user on the 'Input' sheet.  This is used to structure the query to mongo	
+	
+	input_df = ex.get_from_excel(EXCEL_PATH, 'Input')
+	documents = mm.from_mongo(DB_NAME, COLL_NAME, input_df)
+
 	doc_df = ex.mongo_to_dataframe(documents)
 	doc_df = doc_df.astype({'_id': str})
 	doc_df = doc_df[FIRST_COLUMNS + [c for c in list(doc_df.columns) if c not in FIRST_COLUMNS]]
+
+	sht.clear()
 	sht.range('A1').value = doc_df
 	#ex.send_to_excel(doc_df, FIRST_COLUMNS, EXCEL_PATH)			
 	return None
@@ -96,13 +104,14 @@ def update_system():
 	"""
 	This function will update the database and iProperties according to the user input from either excel or webserver
 	"""
-	input_df = ex.get_from_excel(EXCEL_PATH)
+	input_df = ex.get_from_excel(EXCEL_PATH, 'Sheet1')
 	mm.update_mongo(DB_NAME, COLL_NAME, input_df)
-	documents = mm.from_mongo(DB_NAME, COLL_NAME)
+	documents = mm.from_mongo(DB_NAME, COLL_NAME, input_df)
+
 	doc_df = ex.mongo_to_dataframe(documents)
-	#print(doc_df)
+	doc_df = doc_df.astype({'_id': str})
+	
 	path_id_dict = dict(zip(doc_df['Found Location'].values, doc_df['_id']))
-	#print(path_id_dict)
 	inv.change_props(df=doc_df, not_in_api=NOT_IN_API, path_id_dict=path_id_dict)
 	return None
 

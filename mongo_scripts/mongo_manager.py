@@ -20,13 +20,21 @@ def first_to_mongo(items, db_ident, coll_ident):
 	inserted_ids = coll.insert_many(items).inserted_ids
 	return inserted_ids 
 	
-
-def from_mongo(db_ident, coll_ident, query={}):
+#NOTE this works ONLY if we have 1 column and 1 criteria but it is a start.
+def from_mongo(db_ident, coll_ident, df, query={}):
 	#reads from mongodb
 	db = client[db_ident]
 	coll = db[coll_ident]
 
+	#if the passed in dataframe is not empty, construct the query
+	if not df.empty:
+		col = str(list(df.columns)[0])	
+		value = str(df[col].values[0])
+		query = {col: value}
+
+
 	cursor = coll.find(query)
+	pprint(cursor)
 	return list(cursor)
 
 
