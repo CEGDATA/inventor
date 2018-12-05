@@ -14,6 +14,7 @@ def open_inventor():
 	#NOTE, this is the call (I think) for using Apprentice:
 	#inventor = win32com.client.Dispatch('Inventor.ApprenticeServerComponent')
 	#exit()
+	#del inventor	
 	#decide if you want the app to be visible or not - NOTE uncomment to set visible
 	#inventor.Visible = True
 
