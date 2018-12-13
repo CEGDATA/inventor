@@ -14,7 +14,7 @@ from pprint import pprint
 
 import time
 #vendors we will be inserting into the database
-VENDOR_LIST = ['ANDERSON', 'LAPP']
+VENDOR_LIST = ['ANDERSON', 'LAPP', 'OHIO BRASS', 'AFL']
 #directories that we are not interested in traversing
 FORBIDDEN = ['OldVersions', 'Import']
 #the iproperties we want from the database.  NOTE This could be extracted from the excel sheet using the dataframe columns 
@@ -33,7 +33,7 @@ EXCEL_PATH = r"Z:\CEG\DRAFTING\3DManufacturerParts\3DModelDatabase_Jake_work_113
 FIRST_COLUMNS = ['Vendor', 'Part Number']
 
 
-def populate_db():
+def populate_db(vendor_list):
 	"""
 	This function will, given a list of vendors, go into the directories and pull out the iProperties from those .ipt files
 	These iProperties will be inserted into the database.  Each part will have a document into the collection of the database.
@@ -41,7 +41,7 @@ def populate_db():
 	in the Mongo database are linked with each other.
 	"""
 	#get the .ipt files 
-	parts = f.get_ipts(VENDOR_LIST, FORBIDDEN)
+	parts = f.get_ipts(vendor_list, FORBIDDEN)
 	#print(parts)
 	#get the list of properties from these parts
 	parts_props_list = inv.get_data(REQUESTED, parts, NOT_IN_API)
@@ -58,7 +58,6 @@ def populate_db():
 	#time.sleep(2)
 	#inv.check_objectid(parts)
 
-#populate_db()
 
 
 #inv.check_objectid([r'Z:\CEG\DRAFTING\3DManufacturerParts\LAPP\315210-70P1Z\LAPP 315210-70P1Z.ipt'])
@@ -73,6 +72,9 @@ def populate_db():
 #-2147352567: "Exception Occured"
 #-2146959355: "Server execution failed"
 #-2147023170: "The remote procedure call failed"
+
+
+
 def read_from_db():
 	"""
 	This function will allow a user to input a "query" through inputting values into an excel sheet that will return the requested info from mongodb.
@@ -98,8 +100,6 @@ def read_from_db():
 
 
 
-#read_from_db()
-
 def update_system():
 	"""
 	This function will update the database and iProperties according to the user input from either excel or webserver
@@ -117,16 +117,54 @@ def update_system():
 
 
 
+def main():
+	user_input = input(
+	"""What would you like to do?
+	(a) Populate Database
+	(b) Exit
+	""")
+	#quick little function to get the user input.  Calls populate db
+	#shouldn't do anything else since the other calls should be done through excel at this point
+	#NOTE, future development may have us run other functions from here.
+	if user_input == 'a':
+		vendors = list()
+		check = True	
+		while check:	
+			vendor = input(
+			"""Which vendor would you like to enter?
+			NOTE, MAKE SURE DIRECTORIES ARE CLEANED
+			NOTE, ALL CAPS NAMES
+			""")
+			vendors.append(vendor)
+			cont = input("""
+			More vendors? (y)es or (n)o
+			""")
+			if cont == 'n':
+				check = False
+			elif cont == 'y':
+				continue	
+			else:
+				print('Invalid input.  Exiting...')
+				exit()
+		populate_db(vendors)
+	elif user_input == 'b':
+		print('Exiting...')
+		exit()
+	else:
+		print('Invalid input. Exiting...')
 
 
-#change iProperties according to the data in the database
-"""
-parts = f.get_ipts()
-documents = mm.from_mongo(DB_NAME, COLL_NAME)
-doc_df = ex.mongo_to_dataframe(documents)
-inv.change_props(doc_df, parts)
-"""
 
-#populate_db()
-#read_from_db()
-#update_system()
+main()
+
+
+
+
+
+
+
+
+
+
+
+
