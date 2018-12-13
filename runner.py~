@@ -117,7 +117,7 @@ def update_system():
 
 
 
-def main():
+def user():
 	user_input = input(
 	"""What would you like to do?
 	(a) Populate Database
@@ -146,16 +146,16 @@ def main():
 			else:
 				print('Invalid input.  Exiting...')
 				exit()
+
 		populate_db(vendors)
+	
 	elif user_input == 'b':
 		print('Exiting...')
 		exit()
 	else:
 		print('Invalid input. Exiting...')
+	return None
 
-
-
-main()
 
 
 
