@@ -1,7 +1,7 @@
 import os, sys
 sys.path.insert(0, r".\mongo_scripts")
-sys.path.insert(0, r".\mongo_scripts\excel")
-sys.path.insert(0, r".\mongo_scripts\inventor") 
+sys.path.insert(0, r".\excel")
+sys.path.insert(0, r".\inventor") 
 
 import mongo_manager as mm
 import read_write_excel as ex
@@ -123,6 +123,9 @@ def main():
 	(a) Populate Database
 	(b) Exit
 	""")
+	#quick little function to get the user input.  Calls populate db
+	#shouldn't do anything else since the other calls should be done through excel at this point
+	#NOTE, future development may have us run other functions from here.
 	if user_input == 'a':
 		vendors = list()
 		check = True	
@@ -143,7 +146,7 @@ def main():
 			else:
 				print('Invalid input.  Exiting...')
 				exit()
-			
+		populate_db(vendors)
 	elif user_input == 'b':
 		print('Exiting...')
 		exit()

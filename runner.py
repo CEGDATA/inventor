@@ -1,7 +1,7 @@
 import os, sys
 sys.path.insert(0, r".\mongo_scripts")
-sys.path.insert(0, r".\mongo_scripts\excel")
-sys.path.insert(0, r".\mongo_scripts\inventor") 
+sys.path.insert(0, r".\excel")
+sys.path.insert(0, r".\inventor") 
 
 import mongo_manager as mm
 import read_write_excel as ex
