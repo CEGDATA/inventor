@@ -1,0 +1,23 @@
+{
+  "paths": [
+    {
+      "_path": "Lib/site-packages/__pycache__/win_inet_pton.cpython-37.pyc",
+      "path_type": "hardlink",
+      "sha256": "cd3936235808dc5c60ef083512c57db871cdbb9b375bcd80094a4d2af6243ea0",
+      "size_in_bytes": 1912
+    },
+    {
+      "_path": "Lib/site-packages/win_inet_pton-1.0.1-py3.7.egg-info",
+      "path_type": "hardlink",
+      "sha256": "983c1383b23db62c429068bbd7a168dd0c64d5af3b51c64dc62dcabb8782fe6b",
+      "size_in_bytes": 863
+    },
+    {
+      "_path": "Lib/site-packages/win_inet_pton.py",
+      "path_type": "hardlink",
+      "sha256": "6974f19756177ef0469def4fa4b2f495ee8a8c08012fdcafd2004b129c1fd84b",
+      "size_in_bytes": 2753
+    }
+  ],
+  "paths_version": 1
+}

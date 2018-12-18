@@ -1,0 +1,12 @@
+{
+  "sqlite": "3",
+  "xz": "5",
+  "zlib": "1.2",
+  "vc": "14",
+  "cxx_compiler": "vs2015",
+  "bzip2": "1.0",
+  "c_compiler": "vs2015",
+  "libffi": "3.2",
+  "tk": "8.6",
+  "openssl": "1.0.2"
+}

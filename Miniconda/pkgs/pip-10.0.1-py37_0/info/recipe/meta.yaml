@@ -1,0 +1,56 @@
+# This file created by conda-build 3.1.6+534.g828a654f1.dirty
+# meta.yaml template originally from:
+# C:\Users\builder\conda\aggregate\pip-feedstock\recipe, last modified Tue May  1 06:28:49 2018
+# ------------------------------------------------
+
+package:
+    name: pip
+    version: 10.0.1
+source:
+    fn: pip-10.0.1.tar.gz
+    patches:
+        - 0003-Ensure-that-clobber-breaks-hard-links.patch
+    sha256: f2bd08e0cd1b06e10218feaf6fef299f473ba706582eb3bd9d52203fdbd7ee68
+    url: https://pypi.io/packages/source/p/pip/pip-10.0.1.tar.gz
+build:
+    disable_pip: true
+    entry_points:
+        - pip = pip._internal:main
+    number: '0'
+    string: py37_0
+requirements:
+    host:
+        - certifi 2018.4.16 py37_0
+        - python 3.7.0 hea74fb7_0
+        - setuptools 39.2.0 py37_0
+        - vc 14 h0510ff6_3
+        - vs2015_runtime 14.0.25123 3
+        - wincertstore 0.2 py37_0
+    run:
+        - python >=3.7,<3.8.0a0
+        - setuptools
+        - wheel
+test:
+    commands:
+        - pip -h
+        - pip list
+    imports:
+        - pip
+about:
+    dev_url: https://github.com/pypa/pip
+    doc_url: https://pip.pypa.io/en/stable/
+    home: https://pip.pypa.io/en/stable/
+    license: MIT
+    license_family: MIT
+    license_file: LICENSE.txt
+    summary: PyPA recommended tool for installing Python packages
+extra:
+    copy_test_source_files: true
+    final: true
+    recipe-maintainers:
+        - jakirkham
+        - jjhelmus
+        - mingwandroid
+        - msarahan
+        - ocefpaf
+        - pelson

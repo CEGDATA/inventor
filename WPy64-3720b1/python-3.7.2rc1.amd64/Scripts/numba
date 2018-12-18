@@ -1,8 +1,0 @@
-#!C:\Winp\bd37\buPs2\WPy64-3720b1\python-3.7.2rc1.amd64\python.exe
-# -*- coding: UTF-8 -*-
-from __future__ import print_function, division, absolute_import
-
-from numba.numba_entry import main
-
-if __name__ == "__main__":
-    main()

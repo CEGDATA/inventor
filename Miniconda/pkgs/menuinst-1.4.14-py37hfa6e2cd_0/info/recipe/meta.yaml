@@ -1,0 +1,53 @@
+# This file created by conda-build 3.13.0
+# meta.yaml template originally from:
+# C:\ci\containers\000016mo59h\tmp\build\80754af9\rsync-recipes\menuinst-1.4.14-python_3.7-c_compiler_vs2015-on-winbuilder, last modified Tue Aug 28 12:58:49 2018
+# ------------------------------------------------
+
+package:
+    name: menuinst
+    version: 1.4.14
+source:
+    git_rev: 1.4.14
+    git_url: https://github.com/ContinuumIO/menuinst.git
+build:
+    entry_points:
+        - menuinst = menuinst.main:main
+    skip_compile_pyc:
+        - cwp.py
+    string: py37hfa6e2cd_0
+requirements:
+    host:
+        - certifi 2018.8.24 py37_1
+        - python 3.7.0 hea74fb7_0
+        - setuptools 40.2.0 py37_0
+        - vc 14.1 h0510ff6_3
+        - vs2015_runtime 15.5.2 3
+        - vs2015_win-64 14.0.25123 h17c34da_3
+        - wincertstore 0.2 py37_0
+    run:
+        - python >=3.7,<3.8.0a0
+        - pywin32
+        - vc 14.*
+test:
+    commands:
+        - menuinst -h
+        - menuinst --version
+    imports:
+        - menuinst
+        - menuinst.winshortcut
+about:
+    description: 'This application is used by Conda to create shortcuts on a wide
+        variety of
+
+        systems.
+
+        '
+    dev_url: https://github.com/ContinuumIO/menuinst
+    doc_source_url: https://github.com/ContinuumIO/menuinst
+    doc_url: https://pypi.python.org/pypi/menuinst/
+    home: https://github.com/ContinuumIO/menuinst
+    license: BSD
+    summary: cross platform menu item installation
+extra:
+    copy_test_source_files: true
+    final: true

@@ -1,0 +1,49 @@
+# This file created by conda-build 3.10.9
+# meta.yaml template originally from:
+# C:\Users\builder\conda\aggregate\idna-feedstock\recipe, last modified Sat Jul 14 16:20:57 2018
+# ------------------------------------------------
+
+package:
+    name: idna
+    version: '2.7'
+source:
+    fn: idna-2.7.tar.gz
+    sha256: 684a38a6f903c1d71d6d5fac066b58d7768af4de2b832e426ec79c30daa94a16
+    url: https://pypi.io/packages/source/i/idna/idna-2.7.tar.gz
+build:
+    number: '0'
+    script: python setup.py install --single-version-externally-managed --record=record.txt
+    string: py37_0
+requirements:
+    host:
+        - certifi 2018.4.16 py37_0
+        - python 3.7.0 hea74fb7_0
+        - setuptools 39.2.0 py37_0
+        - vc 14 h0510ff6_3
+        - vs2015_runtime 14.0.25123 3
+        - wincertstore 0.2 py37_0
+    run:
+        - python >=3.7,<3.8.0a0
+test:
+    imports:
+        - idna
+about:
+    description: 'A library to support the Internationalised Domain Names in Applications
+
+        (IDNA) protocol as specified in RFC 5891. This version of the protocol
+
+        is often referred to as "IDNA2008".
+
+        '
+    dev_source: https://github.com/kjd/idna
+    home: https://github.com/kjd/idna
+    license: BSD Like
+    license_file: LICENSE.rst
+    summary: Internationalized Domain Names in Applications (IDNA).
+extra:
+    copy_test_source_files: true
+    final: true
+    recipe-maintainers:
+        - goanpeca
+        - jschueller
+        - mingwandroid

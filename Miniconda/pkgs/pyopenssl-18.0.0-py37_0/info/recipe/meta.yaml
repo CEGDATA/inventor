@@ -1,0 +1,65 @@
+# This file created by conda-build 3.10.9
+# meta.yaml template originally from:
+# C:\Users\builder\conda\aggregate\pyopenssl-feedstock\recipe, last modified Tue Jul  3 15:53:14 2018
+# ------------------------------------------------
+
+package:
+    name: pyopenssl
+    version: 18.0.0
+source:
+    sha256: 6488f1423b00f73b7ad5167885312bb0ce410d3312eb212393795b53c8caa580
+    url: https://pypi.io/packages/source/p/pyOpenSSL/pyOpenSSL-18.0.0.tar.gz
+build:
+    number: '0'
+    script: python -m pip install --no-deps --ignore-installed .
+    string: py37_0
+requirements:
+    host:
+        - certifi 2018.4.16 py37_0
+        - pip 10.0.1 py37_0
+        - python 3.7.0 hea74fb7_0
+        - setuptools 39.2.0 py37_0
+        - vc 14 h0510ff6_3
+        - vs2015_runtime 14.0.25123 3
+        - wheel 0.31.1 py37_0
+        - wincertstore 0.2 py37_0
+    run:
+        - cryptography >=2.2.1
+        - python >=3.7,<3.8.0a0
+        - six >=1.5.2
+test:
+    imports:
+        - OpenSSL
+        - OpenSSL.SSL
+        - OpenSSL.crypto
+        - OpenSSL.rand
+about:
+    description: 'pyOpenSSL is a high-level wrapper around a subset of the OpenSSL
+        library.
+
+        It includes:
+
+        -SSL.Connection objects, wrapping the methods of Python''s portable sockets
+
+        -Callbacks written in Python
+
+        -Extensive error-handling mechanism, mirroring OpenSSL''s error codes
+
+        and much more.
+
+        '
+    dev_url: https://github.com/pyca/pyopenssl
+    doc_source_url: https://github.com/pyca/pyopenssl/blob/master/doc/index.rst
+    doc_url: https://pyopenssl.readthedocs.org/en/stable/
+    home: https://github.com/pyca/pyopenssl
+    license: Apache 2.0
+    license_family: Apache
+    license_file: LICENSE
+    summary: Python wrapper module around the OpenSSL library
+extra:
+    copy_test_source_files: true
+    final: true
+    recipe-maintainers:
+        - goanpeca
+        - mingwandroid
+        - nehaljwani
