@@ -1,4 +1,13 @@
+import subprocess
 import os, sys
+
+os.chdir(r'Z:\CEG\Software Development\Miniconda\Scripts')
+
+PROJECT_ENV = 'sk_inventor_env'
+#activate this environment whenever this script is called
+subprocess.call(['activate', PROJECT_ENV])
+
+
 sys.path.insert(0, r".\mongo")
 sys.path.insert(0, r".\excel")
 sys.path.insert(0, r".\inv") 
