@@ -1,7 +1,16 @@
+import subprocess
 import os, sys
-sys.path.insert(0, r".\mongo_scripts")
-sys.path.insert(0, r".\mongo_scripts\excel")
-sys.path.insert(0, r".\mongo_scripts\inventor") 
+
+os.chdir(r'Z:\CEG\Software Development\Miniconda\Scripts')
+
+PROJECT_ENV = 'sk_inventor_env'
+#activate this environment whenever this script is called
+subprocess.call(['activate', PROJECT_ENV])
+
+
+sys.path.insert(0, r".\mongo")
+sys.path.insert(0, r".\excel")
+sys.path.insert(0, r".\inv") 
 
 import mongo_manager as mm
 import read_write_excel as ex
@@ -14,7 +23,9 @@ from pprint import pprint
 
 import time
 #vendors we will be inserting into the database
-VENDOR_LIST = ['ANDERSON', 'LAPP', 'OHIO BRASS', 'AFL']
+VENDOR_LIST = ['3M', 'ABB', 'AFL', 'ANDERSON', 'Burndy', 'CG', 'Chance', 'DeltaStar', 
+		'Hoffman', 'Hubbell', 'LAPP', 'Littelfuse', 'OHIO BRASS', 'Royal', 'SEFCOR',
+		'Siemens', 'Trench', 'Victor Insulators']
 #directories that we are not interested in traversing
 FORBIDDEN = ['OldVersions', 'Import']
 #the iproperties we want from the database.  NOTE This could be extracted from the excel sheet using the dataframe columns 
@@ -28,7 +39,7 @@ DB_NAME = 'Inventor_DB_TESTING'
 #the collection we want to interact with
 COLL_NAME = 'iProperties_Collection_TESTING'
 #path for excel document
-EXCEL_PATH = r"Z:\CEG\DRAFTING\3DManufacturerParts\3DModelDatabase_Jake_work_11302018.xlsm"
+EXCEL_PATH = r"Excel_Manager.xlsm"
 #puts the vendor and part number columns first when writing, for readability
 FIRST_COLUMNS = ['Vendor', 'Part Number']
 
@@ -117,12 +128,15 @@ def update_system():
 
 
 
-def main():
+def user():	
 	user_input = input(
 	"""What would you like to do?
 	(a) Populate Database
 	(b) Exit
 	""")
+	#quick little function to get the user input.  Calls populate db
+	#shouldn't do anything else since the other calls should be done through excel at this point
+	#NOTE, future development may have us run other functions from here.
 	if user_input == 'a':
 		vendors = list()
 		check = True	
@@ -130,29 +144,37 @@ def main():
 			vendor = input(
 			"""Which vendor would you like to enter?
 			NOTE, MAKE SURE DIRECTORIES ARE CLEANED
-			NOTE, ALL CAPS NAMES
+			Type 'exit' to exit
 			""")
-			vendors.append(vendor)
-			cont = input("""
-			More vendors? (y)es or (n)o
-			""")
-			if cont == 'n':
-				check = False
-			elif cont == 'y':
-				continue	
-			else:
-				print('Invalid input.  Exiting...')
+			if vendor == 'exit':
+				print('Exiting...')
 				exit()
-			
+			elif vendor not in VENDOR_LIST:
+				print('Entered vendor not in list of approved vendors.  Please check your spelling')
+				continue
+			else:
+				vendors.append(vendor)
+				cont = input("""
+				More vendors? (y)es or (n)o
+				""")
+				if cont == 'n':
+					check = False
+				elif cont == 'y':
+					continue	
+				else:
+					print('Invalid input.  Exiting...')
+					exit()
+					
+		print(vendors)
+		populate_db(vendors)
+	
 	elif user_input == 'b':
 		print('Exiting...')
 		exit()
 	else:
 		print('Invalid input. Exiting...')
+	return None
 
-
-
-main()
 
 
 
