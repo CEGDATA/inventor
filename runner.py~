@@ -40,7 +40,7 @@ DB_NAME = 'Inventor_DB_TESTING'
 #the collection we want to interact with
 COLL_NAME = 'iProperties_Collection_TESTING'
 #path for excel document
-EXCEL_PATH = r"Excel_Manager.xlsm"
+EXCEL_PATH = r"Z:\CEG\DRAFTING\3DManufacturerParts\3D Model Database.xlsm"
 #puts the vendor and part number columns first when writing, for readability
 FIRST_COLUMNS = ['Vendor', 'Part Number']
 
