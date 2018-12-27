@@ -14,6 +14,7 @@ def open_inventor():
 	#NOTE, this is the call (I think) for using Apprentice:
 	#inventor = win32com.client.Dispatch('Inventor.ApprenticeServerComponent')
 	#exit()
+	#del inventor	
 	#decide if you want the app to be visible or not - NOTE uncomment to set visible
 	#inventor.Visible = True
 
@@ -23,6 +24,10 @@ def open_inventor():
 	#mod = gencache.EnsureModule('{D98A091D-3A0F-4C3E-B36E-61F62068D488}', 0, 1, 0)
 	return inventor#, mod
 
+def close_inventor(inv):
+	inv.Quit()
+	del inv
+	return None
 
 def extract(prop, prop_set):
 	#get the value of the iproperty
@@ -74,8 +79,7 @@ def get_data(requested_props, parts, not_in_api):
 
 		app.Documents.CloseAll()
 	#close inventor after we have extracted the data we are interested in
-	app.Quit()
-	del app
+	close_inventor(app)
 	return parts_props_list
 
 
@@ -104,13 +108,20 @@ def change_props(df=None, not_in_api=None, parts=None, props_to_change=None, pat
 			object_id = str(path_id_dict[path])	
 			#NOTE, if the inventor file already has this as a parameters, win32api will throw error -2147024809: 'The Parameter is Incorrect'.
 			#If this error gets thrown, nothing should be changed, the object id we're attempting to write should be logged as well as the error so we can
-			#investigate.
-			user_def_props.Add(object_id, 'Mongo ObjectId')
+			#investigate.	
+
+			#check if the mongo id exists as a custom property already.  if it does, update with the new one, if it doesn't, create it	
+			try:
+				existing = user_def_props.Item('Mongo ObjectId')	
+				existing.Value = object_id
+			except Exception as exc:	
+				print('Mongo ID likely does not exist as an iProperty.  Adding...')
+				print(exc)
+				user_def_props.Add(object_id, 'Mongo ObjectId')
 			#need to save the document after we write to it	
 			doc.Save()
 			app.Documents.CloseAll()
-		app.Quit()
-		del app
+		close_inventor(app)
 	else:
 		#convert the _id column in the dataframe to strings
 		for path in path_id_dict.keys():
@@ -165,8 +176,8 @@ def change_props(df=None, not_in_api=None, parts=None, props_to_change=None, pat
 						print(f'error reading Mongo object_id for {filename}')
 						print(exc)
 						continue
-
-
+		close_inventor(app)
+		return None
 
 def check_objectid(parts):
 	app = open_inventor()
@@ -177,9 +188,8 @@ def check_objectid(parts):
 		user_def_props = doc.PropertySets.Item('Inventor User Defined Properties')
 		print(user_def_props('Mongo ObjectId').Value)
 		app.Documents.CloseAll()
-	app.Quit()
-	del app
-
+	close_inventor(app)
+	return None
 
 
 
