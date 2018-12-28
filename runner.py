@@ -36,16 +36,16 @@ CHANGING = ['Vendor', 'Part Number', 'Description', 'Catalog Web Link', 'Engr Ap
 #items not found in the inventor api
 NOT_IN_API = ['Filename w/o Extension', 'Found Location']
 #The database we want to interact with
-DB_NAME = 'Inventor_DB'
+DB_NAME = 'Inventor_DB_Development'
 #the collection we want to interact with
-COLL_NAME = 'iProperties_Collection'
+COLL_NAME = 'iProperties_Collection_Development'
 #path for excel document
-EXCEL_PATH = r"Z:\CEG\DRAFTING\3DManufacturerParts\3D_Model_Database.xlsm"
+EXCEL_PATH = r"Z:\CEG\DRAFTING\3DManufacturerParts\3D_Model_Database_Development.xlsm"
 #puts the vendor and part number columns first when writing, for readability
 FIRST_COLUMNS = ['Vendor', 'Part Number']
 
 
-def populate_db(vendor_list):
+def populate_db(vendor_list=None, parts_list=None):
 	"""
 	This function will, given a list of vendors, go into the directories and pull out the iProperties from those .ipt files
 	These iProperties will be inserted into the database.  Each part will have a document into the collection of the database.
@@ -53,10 +53,12 @@ def populate_db(vendor_list):
 	in the Mongo database are linked with each other.
 	"""
 	#get the .ipt files 
-	parts = f.get_ipts(vendor_list, FORBIDDEN)
-	#print(parts)
+	#if there is no parts list, we do the os.walk with the vendor list
+	#if there is a parts list, that's the parts list
+	if parts_list is None:	
+		parts_list = f.get_ipts(vendor_list, FORBIDDEN)	
 	#get the list of properties from these parts
-	parts_props_list = inv.get_data(REQUESTED, parts, NOT_IN_API)
+	parts_props_list = inv.get_data(REQUESTED, parts_list, NOT_IN_API)
 	#send this list to be inserted into mongo
 	ins_ids = mm.first_to_mongo(parts_props_list, DB_NAME, COLL_NAME)
 	#need to give inventor a second to get its act together 
@@ -64,14 +66,29 @@ def populate_db(vendor_list):
 	#make a dictionary mapping the parts paths to the ids from mongo
 	#NOTE, this is dependent on the ordered nature of python lists.  The parts were in a certain order, which is maintained throughout gathering
 	#iProperties and inserting them into the database.  The outputted ids are therefore in the same order.
-	path_id_dict = dict(zip(parts, ins_ids))
+	path_id_dict = dict(zip(parts_list, ins_ids))
 	#add the object_id property per this dictionary
 	inv.change_props(path_id_dict=path_id_dict, is_first=True)
 	#time.sleep(2)
 	#inv.check_objectid(parts)
 
 
+def add_documents_from_excel():
+	#get the dataframe from excel:
+	input_df = ex.get_from_excel(EXCEL_PATH, 'Add Documents')
+	#loop through the dataframe rows and construct paths
+	parts_list = list()	
+	for i in input_df.index:
+		#get vendor and part for each row	
+		vendor = input_df.loc[i, 'Vendor']
+		part = input_df.loc[i, 'Part Number']
+		#create the path from these
+		path = r'Z:\CEG\DRAFTING\3DManufacturerParts\{}\{}\{}.ipt'.format(vendor, part, part)
+		parts_list.append(path)	
+	#run the populate_db function with this list instead of doing the os.walk()
+	populate_db(parts_list=parts_list)	
 
+add_documents_from_excel()
 #inv.check_objectid([r'Z:\CEG\DRAFTING\3DManufacturerParts\LAPP\315210-70P1Z\LAPP 315210-70P1Z.ipt'])
 #import win32api
 #print(win32api.FormatMessage(-2147467259))
