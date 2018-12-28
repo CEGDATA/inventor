@@ -39,8 +39,9 @@ NOT_IN_API = ['Filename w/o Extension', 'Found Location']
 DB_NAME = 'Inventor_DB_Development'
 #the collection we want to interact with
 COLL_NAME = 'iProperties_Collection_Development'
+BASE_PATH = r'Z:\CEG\DRAFTING\3DManufacturerParts_Development'
 #path for excel document
-EXCEL_PATH = r"Z:\CEG\DRAFTING\3DManufacturerParts\3D_Model_Database_Development.xlsm"
+EXCEL_PATH = r"{}\3D_Model_Database_Development.xlsm".format(BASE_PATH)
 #puts the vendor and part number columns first when writing, for readability
 FIRST_COLUMNS = ['Vendor', 'Part Number']
 
@@ -83,12 +84,11 @@ def add_documents_from_excel():
 		vendor = input_df.loc[i, 'Vendor']
 		part = input_df.loc[i, 'Part Number']
 		#create the path from these
-		path = r'Z:\CEG\DRAFTING\3DManufacturerParts\{}\{}\{}.ipt'.format(vendor, part, part)
+		path = r'{}\{}\{}\{}.ipt'.format(BASE_PATH, vendor, part, part)
 		parts_list.append(path)	
 	#run the populate_db function with this list instead of doing the os.walk()
 	populate_db(parts_list=parts_list)	
 
-add_documents_from_excel()
 #inv.check_objectid([r'Z:\CEG\DRAFTING\3DManufacturerParts\LAPP\315210-70P1Z\LAPP 315210-70P1Z.ipt'])
 #import win32api
 #print(win32api.FormatMessage(-2147467259))
