@@ -113,9 +113,9 @@ def read_from_db():
 	#querying will be required.EXCEL_PATH = r"Z:\CEG\DRAFTING\3DManufacturerParts\3DModelDatabase_Jake_work_11152018.xlsx"
 	wb = xw.Book.caller()
 	sht = wb.sheets[0]
-	#input dataframe is created by user on the 'Input' sheet.  This is used to structure the query to mongo	
+	#input dataframe is created by user on the 'Query' sheet.  This is used to structure the query to mongo	
 	
-	input_df = ex.get_from_excel(EXCEL_PATH, 'Input')
+	input_df = ex.get_from_excel(EXCEL_PATH, 'Query')
 	documents = mm.from_mongo(DB_NAME, COLL_NAME, input_df)
 
 	doc_df = ex.mongo_to_dataframe(documents)
