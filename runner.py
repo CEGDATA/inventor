@@ -123,7 +123,7 @@ def read_from_db():
 	doc_df = doc_df[FIRST_COLUMNS + [c for c in list(doc_df.columns) if c not in FIRST_COLUMNS]]
 
 	sht.clear()
-	sht.range('A1').value = doc_df
+	sht.range('A2').value = doc_df
 	#ex.send_to_excel(doc_df, FIRST_COLUMNS, EXCEL_PATH)			
 	return None
 
