@@ -23,6 +23,7 @@ import xlwings as xw
 from pprint import pprint
 
 import time
+
 #vendors we will be inserting into the database
 VENDOR_LIST = ['3M', 'ABB', 'AFL', 'ANDERSON', 'Burndy', 'CG', 'Chance', 'DeltaStar', 
 		'Hoffman', 'Hubbell', 'LAPP', 'Littelfuse', 'OHIO BRASS', 'Royal', 'SEFCOR',
@@ -36,25 +37,27 @@ CHANGING = ['Vendor', 'Part Number', 'Description', 'Catalog Web Link', 'Engr Ap
 #items not found in the inventor api
 NOT_IN_API = ['Filename w/o Extension', 'Found Location']
 #The database we want to interact with
-DB_NAME = 'Inventor_DB'
+DB_NAME = 'Inventor_DB_DEVELOP'
 #the collection we want to interact with
-COLL_NAME = 'iProperties_Collection'
+COLL_NAME = 'iProperties_Collection_DEVELOP'
 #path for excel document
-EXCEL_PATH = r"Z:\CEG\DRAFTING\3DManufacturerParts\3D_Model_Database.xlsm"
+EXCEL_PATH = r"Z:\CEG\DRAFTING\3DManufacturerParts\3D_Model_Database_Development.xlsm"
 #puts the vendor and part number columns first when writing, for readability
 FIRST_COLUMNS = ['Vendor', 'Part Number']
 
 
-def populate_db(vendor_list):
+def populate_db(vendor_list=None, parts=None):
 	"""
 	This function will, given a list of vendors, go into the directories and pull out the iProperties from those .ipt files
 	These iProperties will be inserted into the database.  Each part will have a document into the collection of the database.
 	Once the documents are inserted into mongo, we will write the newly created Object Id as a custom iProperty so that the .ipt and the document 
 	in the Mongo database are linked with each other.
 	"""
-	#get the .ipt files 
-	parts = f.get_ipts(vendor_list, FORBIDDEN)
-	#print(parts)
+	#get the .ipt files if it's just a list of vendors.  If it's a list of parts, just use that list 
+	if parts is None:	
+		parts = f.get_ipts(vendor_list, FORBIDDEN)
+	print(parts)
+	exit()	
 	#get the list of properties from these parts
 	parts_props_list = inv.get_data(REQUESTED, parts, NOT_IN_API)
 	#send this list to be inserted into mongo
@@ -69,6 +72,11 @@ def populate_db(vendor_list):
 	inv.change_props(path_id_dict=path_id_dict, is_first=True)
 	#time.sleep(2)
 	#inv.check_objectid(parts)
+
+
+def create_parts_list_existing_vendor(parts):
+	for part in parts:
+		
 
 
 
@@ -132,8 +140,9 @@ def update_system():
 def user():	
 	user_input = input(
 	"""What would you like to do?
-	(a) Populate Database
-	(b) Exit
+	(a) Populate Database with New Vendors
+	(b) Populate Database with Parts from Existing Vendors
+	(c) Exit
 	""")
 	#quick little function to get the user input.  Calls populate db
 	#shouldn't do anything else since the other calls should be done through excel at this point
@@ -154,7 +163,7 @@ def user():
 				print('Entered vendor not in list of approved vendors.  Please check your spelling')
 				continue
 			else:
-				vendors.append(vendor)
+		C:\Users\jmarsnik\Desktop\data_work\inventor_scripts\best_version\inventor		vendors.append(vendor)
 				cont = input("""
 				More vendors? (y)es or (n)o
 				""")
@@ -167,9 +176,39 @@ def user():
 					exit()
 					
 		print(vendors)
-		populate_db(vendors)
-	
+		populate_db(vendor_list=vendors)
+		
 	elif user_input == 'b':
+		parts = list()	
+		check = True
+		while check:
+			part = input(
+					"""Part Name?
+					NOTE, NO FILE EXTENSION, LEAVE ALL SPACES.  CASE SENSITIVE
+					Type 'exit' to exit
+					""")
+			if part == 'exit':
+				print('Exiting...')
+				exit()
+			else:
+				parts.append(part)
+				cont = input(
+						"""
+						More parts?  (y)es or (n)o
+						""")
+				if cont == 'n':
+					check = False
+				elif cont == 'y':
+					continue
+				else:
+					print('Invalid input. Exiting...')
+					exit()
+		
+		print(parts)
+		parts_dir_list = create_parts_list_existing_vendor(parts)
+		populate_db(parts=parts_dir_list)	
+
+	elif user_input == 'c':
 		print('Exiting...')
 		exit()
 	else:
