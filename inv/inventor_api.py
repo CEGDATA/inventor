@@ -36,7 +36,7 @@ def extract(prop, prop_set):
 	return iprop
 
 def get_inv_properties(requested_props, not_in_api):
-	props = [p for p in requested_props if p not in not_in_api]
+	props = [p for p in requested_props if p not in not_in_api]	
 	return props
 
 
