@@ -1,13 +1,15 @@
 #script to move things to and from mongo
-#this is ideally the only script that will ever be directly executed by a user.  But who knows.
+import sys
+sys.path.insert(0, r"Z:\CEG\Software Development\python_config\inventor")
+
 import pymongo
 from pprint import pprint
 from bson.objectid import ObjectId
 #for connecting to remote database:
 from sshtunnel import SSHTunnelForwarder
 
-from mm_config import MONGO_HOST, SSH_USER, SSH_PASSWORD, REMOTE_IP, REMOTE_PORT
- 
+from mongo_remote_config import MONGO_HOST, SSH_USER, SSH_PASSWORD, REMOTE_IP, REMOTE_PORT
+
 
 connection = f'mongodb://{MONGO_HOST}'
 client = pymongo.MongoClient(connection)

@@ -108,8 +108,7 @@ venv.bak/
 *.swp
 *.swo
 
-# configs
-mongo/mm_config.py
+
 
 
 
