@@ -36,12 +36,12 @@ CHANGING = ['Vendor', 'Part Number', 'Description', 'Catalog Web Link', 'Engr Ap
 #items not found in the inventor api
 NOT_IN_API = ['Filename w/o Extension', 'Found Location']
 #The database we want to interact with
-DB_NAME = 'Inventor_DB'
+DB_NAME = 'Inventor_DB_Development'
 #the collection we want to interact with
-COLL_NAME = 'iProperties_Collection'
-BASE_PATH = r'Z:\CEG\DRAFTING\3DManufacturerParts'
+COLL_NAME = 'iProperties_Collection_Development'
+BASE_PATH = r'Z:\CEG\DRAFTING\3DManufacturerParts_Development'
 #path for excel document
-EXCEL_PATH = r"{}\3D_Model_Database.xlsm".format(BASE_PATH)
+EXCEL_PATH = r"{}\3D_Model_Database_Development.xlsm".format(BASE_PATH)
 #puts the vendor and part number columns first when writing, for readability
 FIRST_COLUMNS = ['Vendor', 'Part Number']
 
@@ -57,7 +57,7 @@ def populate_db(vendor_list=None, parts_list=None):
 	#if there is no parts list, we do the os.walk with the vendor list
 	#if there is a parts list, that's the parts list
 	if parts_list is None:	
-		parts_list = f.get_ipts(vendor_list, FORBIDDEN)	
+		parts_list = f.get_ipts(BASE_PATH, vendor_list, FORBIDDEN)	
 	#get the list of properties from these parts
 	parts_props_list = inv.get_data(REQUESTED, parts_list, NOT_IN_API)
 	#send this list to be inserted into mongo
@@ -69,7 +69,7 @@ def populate_db(vendor_list=None, parts_list=None):
 	#iProperties and inserting them into the database.  The outputted ids are therefore in the same order.
 	path_id_dict = dict(zip(parts_list, ins_ids))
 	#add the object_id property per this dictionary
-	inv.change_props(path_id_dict=path_id_dict, is_first=True)
+	inv.change_props(path_id_dict=path_id_dict, is_first=True)	
 	#time.sleep(2)
 	#inv.check_objectid(parts)
 
@@ -146,7 +146,7 @@ def update_system():
 
 
 
-def user():	
+def user():		
 	user_input = input(
 	"""What would you like to do?
 	(a) Populate Database
