@@ -11,7 +11,7 @@ def get_ipts(base_path, vendor_list, forbidden):
 		print(vendor)
 		#we want to ignore the first directory being the vendor directory
 		i = 0
-		for root, dirs, files in os.walk(r'{}\\'.format(base_path) + vendor):
+		for root, dirs, files in os.walk(r'{}''\\'.format(base_path) + vendor):
 			dirs[:] = [d for d in dirs if d not in forbidden]
 			if i != 0:
 				for f in files:

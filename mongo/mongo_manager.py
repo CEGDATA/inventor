@@ -2,6 +2,8 @@
 import sys
 sys.path.insert(0, r"Z:\CEG\Software Development\python_config\inventor")
 
+import time
+
 import pymongo
 from pprint import pprint
 from bson.objectid import ObjectId
@@ -11,14 +13,14 @@ from sshtunnel import SSHTunnelForwarder
 from mongo_remote_config import MONGO_HOST, SSH_USER, SSH_PASSWORD, REMOTE_IP, REMOTE_PORT
 
 
-connection = f'mongodb://{MONGO_HOST}'
-client = pymongo.MongoClient(connection)
+#connection = f'mongodb://{MONGO_HOST}'
+#client = pymongo.MongoClient(connection)
 #conn = 'mongodb://localhost:27017'
 #client = pymongo.MongoClient(conn)
 
 #Database is now located on srv01!
 #NOTE, not sure if I'll do it this way
-def connect_to_remote(db_name, coll_name):	
+def connect_to_remote(db_name, coll_name):		
 	server = SSHTunnelForwarder(
 			MONGO_HOST,
 			ssh_username=SSH_USER,
@@ -27,6 +29,7 @@ def connect_to_remote(db_name, coll_name):
 			)
 
 	server.start()
+	time.sleep(5)
 
 	client = pymongo.MongoClient(REMOTE_IP, server.local_bind_port)
 		
@@ -53,6 +56,9 @@ def first_to_mongo(items, db_ident, coll_ident):
 #NOTE this works ONLY if we have 1 column and 1 criteria but it is a start.
 def from_mongo(db_ident, coll_ident, df, query={}):
 	#reads from mongodb
+	mongo_tuple = connect_to_remote(db_ident, coll_ident)
+	server = mongo_tuple[0]	
+	client = mongo_tuple[1]
 	db = client[db_ident]
 	coll = db[coll_ident]
 
@@ -63,13 +69,22 @@ def from_mongo(db_ident, coll_ident, df, query={}):
 		value = str(df[col].values[0])
 		query = {col: value}
 
-
-	cursor = coll.find(query)
-	pprint(cursor)
+	cursor = list(coll.find(query))
+	#for doc in list(cursor):	
+		#pprint(doc)
+	#NOTE, why is the close() function not working but del does?	
+	client.close()		
+	server.close()		
+	#del client
+	#del server
+	#pprint(threading.enumerate())	
 	return list(cursor)
 
 
 def update_mongo(db_ident, coll_ident, df):
+	mongo_tuple = connect_to_remote(db_ident, coll_ident)
+	server = mongo_tuple[0]	
+	client = mongo_tuple[1]	
 	db = client[db_ident]
 	coll = db[coll_ident]
 
@@ -81,6 +96,9 @@ def update_mongo(db_ident, coll_ident, df):
 						{'_id': ObjectId(_id)},
 						{'$set': 
 							{prop: df[df['_id'] == _id][prop].item()}})
+	
+	client.close()		
+	server.close()		
 	return None
 						
 
