@@ -88,13 +88,10 @@ def add_documents_from_excel():
 		parts_list.append(path)	
 	#run the populate_db function with this list instead of doing the os.walk()
 	populate_db(parts_list=parts_list)	
+#add_documents_from_excel()
 
-#inv.check_objectid([r'Z:\CEG\DRAFTING\3DManufacturerParts\LAPP\315210-70P1Z\LAPP 315210-70P1Z.ipt'])
-#import win32api
-#print(win32api.FormatMessage(-2147467259))
-#print(win32api.FormatMessage(-2147024809))
-#print(win32api.FormatMessage(-2147352567))
-#exit()
+
+
 #win32api errors:
 #-2147024809: "The parameter is incorrect"
 #-2147023170: "The remote procedure call failed"
@@ -117,14 +114,13 @@ def read_from_db():
 	input_df = ex.get_from_excel(EXCEL_PATH, 'Query')
 	documents = mm.from_mongo(DB_NAME, COLL_NAME, input_df)	
 
-	doc_df = ex.mongo_to_dataframe(documents)
+	doc_df = ex.mongo_to_dataframe(documents)	
 	doc_df = doc_df.astype({'_id': str})
-	doc_df = doc_df[FIRST_COLUMNS + [c for c in list(doc_df.columns) if c not in FIRST_COLUMNS]]
-	print(doc_df)	
+	doc_df = doc_df[FIRST_COLUMNS + [c for c in list(doc_df.columns) if c not in FIRST_COLUMNS]]	
 
 	sht.clear()
-	sht.range('A2').value = doc_df
-	ex.send_to_excel(doc_df, FIRST_COLUMNS, EXCEL_PATH)				
+	sht.range('A2').options(index=False).value = doc_df
+	#ex.send_to_excel(doc_df, FIRST_COLUMNS, EXCEL_PATH)				
 	return None
 #read_from_db()
 
@@ -133,17 +129,20 @@ def update_system():
 	"""
 	This function will update the database and iProperties according to the user input from either excel or webserver
 	"""
-	input_df = ex.get_from_excel(EXCEL_PATH, 'Sheet1')
+	input_df = ex.get_from_excel(EXCEL_PATH, 'Sheet1')			
 	mm.update_mongo(DB_NAME, COLL_NAME, input_df)
+		
 	documents = mm.from_mongo(DB_NAME, COLL_NAME, input_df)
-
+	print(documents)
+	exit()	
 	doc_df = ex.mongo_to_dataframe(documents)
+	print(doc_df)	
 	doc_df = doc_df.astype({'_id': str})
 	
 	path_id_dict = dict(zip(doc_df['Found Location'].values, doc_df['_id']))
 	inv.change_props(df=doc_df, not_in_api=NOT_IN_API, path_id_dict=path_id_dict)
 	return None
-
+#update_system()
 
 
 def user():		
