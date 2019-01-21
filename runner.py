@@ -36,12 +36,12 @@ CHANGING = ['Vendor', 'Part Number', 'Description', 'Catalog Web Link', 'Engr Ap
 #items not found in the inventor api
 NOT_IN_API = ['Filename w/o Extension', 'Found Location']
 #The database we want to interact with
-DB_NAME = 'Inventor_DB'
+DB_NAME = 'Inventor_DB_Development'
 #the collection we want to interact with
-COLL_NAME = 'iProperties_Collection'
-BASE_PATH = r'Z:\CEG\DRAFTING\3DManufacturerParts'
+COLL_NAME = 'iProperties_Collection_Development'
+BASE_PATH = r'Z:\CEG\DRAFTING\3DManufacturerParts_Development'
 #path for excel document
-EXCEL_PATH = r"{}\3D_Model_Database.xlsm".format(BASE_PATH)
+EXCEL_PATH = r"{}\3D_Model_Database_Development.xlsm".format(BASE_PATH)
 #puts the vendor and part number columns first when writing, for readability
 FIRST_COLUMNS = ['Vendor', 'Part Number']
 
@@ -57,7 +57,7 @@ def populate_db(vendor_list=None, parts_list=None):
 	#if there is no parts list, we do the os.walk with the vendor list
 	#if there is a parts list, that's the parts list
 	if parts_list is None:	
-		parts_list = f.get_ipts(vendor_list, FORBIDDEN)	
+		parts_list = f.get_ipts(BASE_PATH, vendor_list, FORBIDDEN)	
 	#get the list of properties from these parts
 	parts_props_list = inv.get_data(REQUESTED, parts_list, NOT_IN_API)
 	#send this list to be inserted into mongo
@@ -69,7 +69,7 @@ def populate_db(vendor_list=None, parts_list=None):
 	#iProperties and inserting them into the database.  The outputted ids are therefore in the same order.
 	path_id_dict = dict(zip(parts_list, ins_ids))
 	#add the object_id property per this dictionary
-	inv.change_props(path_id_dict=path_id_dict, is_first=True)
+	inv.change_props(path_id_dict=path_id_dict, is_first=True)	
 	#time.sleep(2)
 	#inv.check_objectid(parts)
 
@@ -88,13 +88,10 @@ def add_documents_from_excel():
 		parts_list.append(path)	
 	#run the populate_db function with this list instead of doing the os.walk()
 	populate_db(parts_list=parts_list)	
+#add_documents_from_excel()
 
-#inv.check_objectid([r'Z:\CEG\DRAFTING\3DManufacturerParts\LAPP\315210-70P1Z\LAPP 315210-70P1Z.ipt'])
-#import win32api
-#print(win32api.FormatMessage(-2147467259))
-#print(win32api.FormatMessage(-2147024809))
-#print(win32api.FormatMessage(-2147352567))
-#exit()
+
+
 #win32api errors:
 #-2147024809: "The parameter is incorrect"
 #-2147023170: "The remote procedure call failed"
@@ -113,40 +110,39 @@ def read_from_db():
 	#querying will be required.EXCEL_PATH = r"Z:\CEG\DRAFTING\3DManufacturerParts\3DModelDatabase_Jake_work_11152018.xlsx"
 	wb = xw.Book.caller()
 	sht = wb.sheets[0]
-	#input dataframe is created by user on the 'Query' sheet.  This is used to structure the query to mongo	
-	
+	#input dataframe is created by user on the 'Query' sheet.  This is used to structure the query to mongo		
 	input_df = ex.get_from_excel(EXCEL_PATH, 'Query')
-	documents = mm.from_mongo(DB_NAME, COLL_NAME, input_df)
+	documents = mm.from_mongo(DB_NAME, COLL_NAME, input_df)	
 
-	doc_df = ex.mongo_to_dataframe(documents)
+	doc_df = ex.mongo_to_dataframe(documents)	
 	doc_df = doc_df.astype({'_id': str})
-	doc_df = doc_df[FIRST_COLUMNS + [c for c in list(doc_df.columns) if c not in FIRST_COLUMNS]]
+	doc_df = doc_df[FIRST_COLUMNS + [c for c in list(doc_df.columns) if c not in FIRST_COLUMNS]]	
 
 	sht.clear()
-	sht.range('A2').value = doc_df
-	#ex.send_to_excel(doc_df, FIRST_COLUMNS, EXCEL_PATH)			
+	sht.range('A2').options(index=False).value = doc_df
+	#ex.send_to_excel(doc_df, FIRST_COLUMNS, EXCEL_PATH)				
 	return None
-
+#read_from_db()
 
 
 def update_system():
 	"""
 	This function will update the database and iProperties according to the user input from either excel or webserver
 	"""
-	input_df = ex.get_from_excel(EXCEL_PATH, 'Sheet1')
+	input_df = ex.get_from_excel(EXCEL_PATH, 'Sheet1')			
 	mm.update_mongo(DB_NAME, COLL_NAME, input_df)
+		
 	documents = mm.from_mongo(DB_NAME, COLL_NAME, input_df)
-
-	doc_df = ex.mongo_to_dataframe(documents)
+	doc_df = ex.mongo_to_dataframe(documents)	
 	doc_df = doc_df.astype({'_id': str})
 	
 	path_id_dict = dict(zip(doc_df['Found Location'].values, doc_df['_id']))
 	inv.change_props(df=doc_df, not_in_api=NOT_IN_API, path_id_dict=path_id_dict)
 	return None
+#update_system()
 
 
-
-def user():	
+def user():		
 	user_input = input(
 	"""What would you like to do?
 	(a) Populate Database
@@ -159,8 +155,7 @@ def user():
 		vendors = list()
 		check = True	
 		while check:	
-			vendor = input(
-			"""Which vendor would you like to enter?
+			vendor = input("""Which vendor would you like to enter?
 			NOTE, MAKE SURE DIRECTORIES ARE CLEANED
 			Type 'exit' to exit
 			""")
