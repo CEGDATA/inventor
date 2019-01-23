@@ -13,8 +13,7 @@ def mongo_to_dataframe(documents):
 def send_to_excel(df, first_columns, excel_path):
 	#for display purposes, doesn't actually change
 	#NOTE, we could have the user input the columns, and have pandas order the columns that way
-	df = df[first_columns + [c for c in list(df.columns) if c not in first_columns]]
-	print(df)	
+	df = df[first_columns + [c for c in list(df.columns) if c not in first_columns]]	
 	df.to_excel(excel_path, index=False)
 
 def get_from_excel(excel_path, sheet):
