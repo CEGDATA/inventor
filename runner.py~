@@ -23,6 +23,9 @@ import xlwings as xw
 from pprint import pprint
 
 import time
+
+#location of the apprentice .tlb file
+APPRENTICE_TLB = r'Z:\CEG\Software Development\project_resources\inventor\RxInventor.tlb'
 #vendors we will be inserting into the database
 VENDOR_LIST = ['3M', 'ABB', 'AFL', 'ANDERSON', 'Burndy', 'CG', 'Chance', 'DeltaStar', 
 		'Hoffman', 'Hubbell', 'LAPP', 'Littelfuse', 'OHIO BRASS', 'Royal', 'SEFCOR',
@@ -59,7 +62,7 @@ def populate_db(vendor_list=None, parts_list=None):
 	if parts_list is None:	
 		parts_list = f.get_ipts(BASE_PATH, vendor_list, FORBIDDEN)	
 	#get the list of properties from these parts
-	parts_props_list = inv.get_data(REQUESTED, parts_list, NOT_IN_API)
+	parts_props_list = inv.get_data(APPRENTICE_TLB, REQUESTED, parts_list, NOT_IN_API)
 	#send this list to be inserted into mongo
 	ins_ids = mm.first_to_mongo(parts_props_list, DB_NAME, COLL_NAME)
 	#need to give inventor a second to get its act together 
@@ -69,7 +72,7 @@ def populate_db(vendor_list=None, parts_list=None):
 	#iProperties and inserting them into the database.  The outputted ids are therefore in the same order.
 	path_id_dict = dict(zip(parts_list, ins_ids))
 	#add the object_id property per this dictionary
-	inv.change_props(path_id_dict=path_id_dict, is_first=True)	
+	inv.change_props(APPRENTICE_TLB, path_id_dict=path_id_dict, is_first=True)	
 	#time.sleep(2)
 	#inv.check_objectid(parts)
 
@@ -130,19 +133,19 @@ def update_system():
 	This function will update the database and iProperties according to the user input from either excel or webserver
 	"""
 	input_df = ex.get_from_excel(EXCEL_PATH, 'Sheet1')			
+	print(input_df)	
 	mm.update_mongo(DB_NAME, COLL_NAME, input_df)
 		
 	documents = mm.from_mongo(DB_NAME, COLL_NAME, input_df)
-	print(documents)
-	exit()	
-	doc_df = ex.mongo_to_dataframe(documents)
+	print(documents)	
+	doc_df = ex.mongo_to_dataframe(documents)	
 	print(doc_df)	
 	doc_df = doc_df.astype({'_id': str})
 	
 	path_id_dict = dict(zip(doc_df['Found Location'].values, doc_df['_id']))
-	inv.change_props(df=doc_df, not_in_api=NOT_IN_API, path_id_dict=path_id_dict)
+	inv.change_props(APPRENTICE_TLB, df=doc_df, not_in_api=NOT_IN_API, path_id_dict=path_id_dict)
 	return None
-#update_system()
+update_system()
 
 
 def user():		
