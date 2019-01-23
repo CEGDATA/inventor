@@ -62,7 +62,7 @@ def from_mongo(db_ident, coll_ident, df, query={}):
 	coll = db[coll_ident]
 
 	#if the passed in dataframe is not empty, construct the query
-	if not df.empty:https://www.youtube.com/watch?v=UUUVi3BKLto
+	if not df.empty:
 		print(df)		
 		#NOTE this is the column name, not the collection
 		col = str(list(df.columns)[0])	
