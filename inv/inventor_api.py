@@ -72,7 +72,7 @@ def get_data(requested_props, parts, not_in_api):
 		#get the found location and the filename and add them to their locations in the dictionary
 		#os.path.dirname() converts the string to the directory path - does not include the filename
 		found_location = os.path.dirname(part)
-		part_prop_dict['Filename w/o Extension'] = filename_wo_extension
+		part_prop_dict['Filename w/o Extension'] = https://www.youtube.com/watch?v=UUUVi3BKLtofilename_wo_extension
 		part_prop_dict['Found Location'] = found_location
 		#print(part_prop_dict)
 		parts_props_list.append(part_prop_dict)	
