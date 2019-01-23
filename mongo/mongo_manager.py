@@ -1,5 +1,6 @@
 #script to move things to and from mongo
 import sys
+#path to our super secure config file
 sys.path.insert(0, r"Z:\CEG\Software Development\python_config\inventor")
 
 import time

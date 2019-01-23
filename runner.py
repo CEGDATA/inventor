@@ -39,12 +39,12 @@ CHANGING = ['Vendor', 'Part Number', 'Description', 'Catalog Web Link', 'Engr Ap
 #items not found in the inventor api
 NOT_IN_API = ['Filename w/o Extension', 'Found Location']
 #The database we want to interact with
-DB_NAME = 'Inventor_DB_Development'
+DB_NAME = 'Inventor_DB'
 #the collection we want to interact with
-COLL_NAME = 'iProperties_Collection_Development'
-BASE_PATH = r'Z:\CEG\DRAFTING\3DManufacturerParts_Development'
+COLL_NAME = 'iProperties_Collection'
+BASE_PATH = r'Z:\CEG\DRAFTING\3DManufacturerParts'
 #path for excel document
-EXCEL_PATH = r"{}\3D_Model_Database_Development.xlsm".format(BASE_PATH)
+EXCEL_PATH = r"{}\3D_Model_Database.xlsm".format(BASE_PATH)
 #puts the vendor and part number columns first when writing, for readability
 FIRST_COLUMNS = ['Vendor', 'Part Number']
 
